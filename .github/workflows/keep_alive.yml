@@ -1,0 +1,45 @@
+name: Keep Streamlit Alive (Browser)
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' 
+  workflow_dispatch:
+
+jobs:
+  wake-up:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install chromium
+
+      - name: Visit and Wake App
+        run: |
+          python -c "
+          from playwright.sync_api import sync_playwright
+          import time
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              page = browser.new_page()
+              print('Visitando la app...')
+              page.goto('https://credit-risk-model-alberth.streamlit.app', timeout=60000)
+              time.sleep(5)
+              
+              # Busca el botón de despertar y le da clic
+              button = page.query_selector('button:has-text(\"Yes, get this app back up!\")')
+              if button:
+                  print('App dormida. Haciendo clic para despertar...')
+                  button.click()
+                  time.sleep(10)
+              else:
+                  print('App activa y funcionando correctamente.')
+              
+              browser.close()
+          "
