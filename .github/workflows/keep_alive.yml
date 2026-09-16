@@ -29,7 +29,7 @@ jobs:
               browser = p.chromium.launch(headless=True)
               page = browser.new_page()
               print('Visitando la app...')
-              page.goto('https://credit-risk-model-alberth.streamlit.app', timeout=60000)
+              page.goto('https://agentic-brochure-generator.streamlit.app', timeout=60000)
               time.sleep(5)
               
               # Busca el botón de despertar y le da clic
